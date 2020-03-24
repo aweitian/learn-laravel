@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Test\Pale;
 use App\Test\PaleArg;
+use App\Test\PaleInject;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -108,4 +109,27 @@ class ContainerTest extends TestCase
         $this->assertTrue($b->getA() === 55);
 
     }
+
+    /**
+     * 带参数的MAKE
+     */
+    public function testWhen()
+    {
+        $app = app();
+        $app->when(PaleArg::class)
+            ->needs('$b')
+            ->give(5);
+        $app->when(PaleArg::class)
+            ->needs('$c')
+            ->give(6);
+
+        $app->bind('pale_inject', PaleInject::class, true);
+
+        $i = $app->make('pale_inject');
+        $this->assertTrue($i instanceof PaleInject);
+//        var_dump($i->getA());
+        $this->assertTrue($i->getA() === 65);
+    }
+
+
 }
